@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchData() {
-        val rollNo = binding.rollNoEt.text.toString()
+        val rollNo = binding.SearchRollNoEt.text.toString()
         if (rollNo.isNotEmpty()) {
             lateinit var student: Student
             GlobalScope.launch {
