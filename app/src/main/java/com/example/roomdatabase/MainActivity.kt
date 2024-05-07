@@ -1,5 +1,6 @@
 package com.example.roomdatabase
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -36,7 +37,9 @@ class MainActivity : AppCompatActivity() {
                 studentDatabase.StudentDao().deleteAll()
             }
         }
-
+        binding.showBtn.setOnClickListener {
+            startActivity(Intent(this, ShowData::class.java))
+        }
     }
 
     private fun saveData() {
@@ -61,12 +64,12 @@ class MainActivity : AppCompatActivity() {
     private fun searchData() {
         val rollNo = binding.SearchRollNoEt.text.toString()
         if (rollNo.isNotEmpty()) {
-            lateinit var student: Student
+
             GlobalScope.launch {
-                student = studentDatabase.StudentDao().findById(rollNo.toInt())
+               var student:Student = studentDatabase.StudentDao().findById(rollNo.toInt())
                 if (studentDatabase.StudentDao().isEmpty()) {
-                    Handler(Looper.getMainLooper()).post {
-                        Toast.makeText(this@MainActivity,"No data find", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post{
+                        Toast.makeText(this@MainActivity, "No data find", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     displayData(student)
@@ -77,10 +80,21 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun displayData(student: Student) {
         withContext(Dispatchers.Main) {
-            binding.firstNameEt.setText(student.firstName.toString())
-            binding.lastNameEt.setText(student.lastName.toString())
-            binding.rollNoEt.setText(student.rollno.toString())
+            val fname = student?.firstName.toString()
+            val lname = student?.lastName.toString()
+            val roll = student?.rollno.toString()
 
+            if (fname.isNotEmpty() || lname.isNotEmpty() || roll.isNotEmpty()) {
+                binding.firstNameEt.setText("")
+                binding.lastNameEt.setText("")
+                binding.rollNoEt.setText("")
+                Toast.makeText(this@MainActivity, "No Data found", Toast.LENGTH_SHORT).show()
+            } else {
+                binding.firstNameEt.setText(fname)
+                binding.lastNameEt.setText(lname)
+                binding.rollNoEt.setText(roll)
+
+            }
         }
     }
 }
